@@ -23,7 +23,6 @@ class Lookit(Gtk.Application):
         Gtk.Application.do_startup(self)
 
         menu = Gio.Menu()
-        menu.set_label("Test")
         menu.append("About", "app.about")
         menu.append("Quit", "app.quit")
         self.set_app_menu(menu)
@@ -56,7 +55,7 @@ class Lookit(Gtk.Application):
 
     def on_about(self, action, parameter):
         if not self.about_dialog:
-            self.about_dialog = AboutDialog(application=self, title="About Lookit")
+            self.about_dialog = AboutDialog(self.window, application=self, title="About Lookit")
 
         self.about_dialog.present()
 
