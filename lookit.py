@@ -1,17 +1,25 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GLib, Gtk, Gio
+from os.path import dirname
 
 import sys
 
 from ui.AboutDialog import AboutDialog
 from ui.MainWindow import MainWindow
+from upload.PluginLoader import PluginLoader
 
 class Lookit(Gtk.Application):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, application_id='com.zachtib.lookit',
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
                          **kwargs)
+
+        self.loader = PluginLoader()
+        self.loader.load_from_directory(dirname(__file__) + '/upload/plugins/');
+
+        for plugin in self.loader.get_plugin_names():
+            print(self.loader.get_plugin(plugin).do_upload("Test"))
 
         self.window = None
         self.about_dialog = None

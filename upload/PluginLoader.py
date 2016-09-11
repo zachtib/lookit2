@@ -1,8 +1,8 @@
 import os
-from os.path import dirname
+import re
 from importlib import import_module
-
-import plugins
+from importlib.machinery import SourceFileLoader
+from os.path import dirname, splitext
 
 class PluginLoader:
     __MainModule = '__init__'
@@ -11,18 +11,24 @@ class PluginLoader:
         self.__plugins = {}
 
     def load_from_directory(self, path):
+        print('Loading plugins from', path)
+        mod_name = lambda fp: '.' + splitext(fp)[0]
+
         for name in os.listdir(path):
-            location = os.path.join(path, name)
-            if not os.path.isdir(location) or not self.__MainModule + ".py" in os.listdir(location):
-                continue
-            tmpmodule = import_module('.' + name, 'plugins')
-            if hasattr(tmpmodule, 'get_plugin'):
-                if (callable(tmpmodule.get_plugin)):
-                    self.__plugins[name] = tmpmodule.get_plugin()
+            print('Attempting to load', mod_name(name))
+            if name.endswith('.py') and not name.startswith('__'):
+                n = mod_name(name)
+                p = os.path.abspath(os.path.join(path, name))
+                print(n, p)
+                loader = SourceFileLoader(n, p)
+                tmpmodule = loader.load_module()
+                if hasattr(tmpmodule, 'get_plugin'):
+                    if (callable(tmpmodule.get_plugin)):
+                        self.__plugins[name] = tmpmodule.get_plugin()
+                    else:
+                        print(name, 'module get_plugin is not callable')
                 else:
-                    print(name, 'module get_plugin is not callable')
-            else:
-                print(name, 'has no attribute get_plugin')
+                    print(name, 'has no attribute get_plugin')
 
     def get_plugin_names(self):
         return self.__plugins.keys()
@@ -32,7 +38,7 @@ class PluginLoader:
 
 if __name__ == '__main__':
     loader = PluginLoader()
-    loader.load_from_directory(os.path.abspath(dirname(__file__) + '/../plugins'))
+    loader.load_from_directory(os.path.abspath(dirname(__file__) + '/plugins'))
 
     plugins = loader.get_plugin_names()
     print(plugins)
