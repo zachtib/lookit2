@@ -7,6 +7,7 @@ from util import dprint as print
 
 class PluginLoader:
     __MainModule = '__init__'
+
     def __init__(self):
         super().__init__()
         self.__plugins = {}
