@@ -9,6 +9,8 @@ from ui.AboutDialog import AboutDialog
 from ui.MainWindow import MainWindow
 from upload.PluginLoader import PluginLoader
 
+from util import dprint as print
+
 class Lookit(Gtk.Application):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, application_id='com.zachtib.lookit',
@@ -17,9 +19,6 @@ class Lookit(Gtk.Application):
 
         self.loader = PluginLoader()
         self.loader.load_from_directory(dirname(__file__) + '/upload/plugins/');
-
-        for plugin in self.loader.get_plugin_names():
-            print(self.loader.get_plugin(plugin).do_upload("Test"))
 
         self.window = None
         self.about_dialog = None

@@ -5,3 +5,5 @@ program_website = 'https://github.com/zachtib/lookit2'
 program_website_label = 'Lookit2 on GitHub'
 
 copyright_string = '(c) 2016 Zach Tibbitts'
+
+DEBUG = True
